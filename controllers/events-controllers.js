@@ -64,7 +64,6 @@ const getEventsByOrganizatorId = async (req, res, next) => {
 
 const createEvent = async (req, res, next) => {
   const errors = validationResult(req);
-  console.log(req.body);
   if (!errors.isEmpty()) {
     return next(
       new HttpError("Invalid inputs passed, please check your data!.", 422)
@@ -85,7 +84,7 @@ const createEvent = async (req, res, next) => {
     organizator = await Organizator.findById(req.organizatorData.organizatorId);
   } catch (err) {
     const error = new HttpError(
-      "Creating event failed, please try again.",
+      "Creating event failed, please try again",
       500
     );
     return next(error);
@@ -98,24 +97,26 @@ const createEvent = async (req, res, next) => {
     return next(error);
   }
 
-  // console.log(organizator);
+  //  console.log(organizator);
 
   try {
     const sess = await mongoose.startSession();
     sess.startTransaction();
     await createdEvent.save({ session: sess });
     organizator.events.push(createdEvent);
+    console.log(req.body);
     await organizator.save({ session: sess });
     await sess.commitTransaction();
   } catch (err) {
     const error = new HttpError(
-      "Creating event failed, please try again.",
+      "Creating event failed, please try again!",
       500
     );
     return next(error);
   }
 
   res.status(201).json({ event: createdEvent });
+
 };
 
 const updateEvent = async (req, res, next) => {
@@ -126,7 +127,7 @@ const updateEvent = async (req, res, next) => {
     );
   }
 
-  const { title, eventType, date } = req.body;
+  const { title, eventType } = req.body;
   const eventId = req.params.eid;
 
   let event;
@@ -147,7 +148,7 @@ const updateEvent = async (req, res, next) => {
 
   event.title = title;
   event.eventType = eventType;
-  event.date = date;
+  
 
   try {
     await event.save();

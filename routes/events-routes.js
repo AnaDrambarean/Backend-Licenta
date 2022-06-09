@@ -2,15 +2,16 @@ const express = require("express");
 const { check } = require("express-validator");
 
 const eventsControllers = require("../controllers/events-controllers");
-const checkAuthO = require("../middleware/check-authO");
+const checkAuth = require("../middleware/check-auth");
 
 const router = express.Router();
 
 router.get("/:eid", eventsControllers.getEventById);
 
-router.get("/event/:eid", eventsControllers.getEventsByOrganizatorId);
+router.get("/organizator/:oid", eventsControllers.getEventsByOrganizatorId);
 
-router.use(checkAuthO);
+
+router.use(checkAuth);
 
 router.post(
   "/",
